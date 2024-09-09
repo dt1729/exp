@@ -1,0 +1,3 @@
+[submodule "dep/act"]
+	path = dep/act
+	url = https://github.com/tonyzhaozh/act.git
