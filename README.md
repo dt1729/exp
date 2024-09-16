@@ -14,3 +14,7 @@ Trained Model -> ONNX Format(Serialised Protobuf File) -> Hardware Accelertion/P
 #### ONNX Versioning for description
 
 ![alt text](image-2.png)
+
+#### ONNX Runtime
+
+![alt text](image-3.png)
