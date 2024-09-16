@@ -7,16 +7,41 @@ from torchvision import datasets, transforms
 from torch import Tensor
 
 class NewFilter(nn.Module):
+    # def __init__(self, in_channels: int, out_channels: int, kernel_size: int):
+    #     """ A standard way to initialise a convolution based filter however this will not be picked up by ONNX,
+    #         The layer will be seen as untrainable weight. 
+    #     """
+    #     super(NewFilter, self).__init__()
+    #     kernel_tensor = 0.2 * torch.ones(
+    #         [out_channels, in_channels, kernel_size, kernel_size], dtype=torch.float32
+    #     )
+    #     self.kernel = nn.Parameter(kernel_tensor, requires_grad=True)
+
+    # def forward(self, x):
+    #     x = F.conv2d(x, self.kernel, padding=1)
+    #     return x
+
     def __init__(self, in_channels: int, out_channels: int, kernel_size: int):
+        """ A new way to initialise a convolution based filter this will be picked up by ONNX,
+            The layer will be seen as a trainable weight. 
+        """
+
         super(NewFilter, self).__init__()
-        kernel_tensor = 0.2 * torch.ones(
-            [out_channels, in_channels, kernel_size, kernel_size], dtype=torch.float32
+        # Initialize an nn.Conv2d layer
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
+            padding=kernel_size // 2,
+            bias=False  # Set to True if you want a bias term
         )
-        self.kernel = nn.Parameter(kernel_tensor, requires_grad=True)
+        # Manually set the weights to a specific value (e.g., all fives)
+        nn.init.constant_(self.conv.weight, 0.2)
 
     def forward(self, x):
-        x = F.conv2d(x, self.kernel, padding=1)
-        return x
+        return self.conv(x)
+
+
 
 # Define the CNN architecture
 class SimpleCNN(nn.Module):
